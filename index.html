@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGMA TV | مشاهدة وتحميل الحلقات الحصرية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #E50914;
+            --bg-dark: #0a0b0e;
+            --card-bg: rgba(14, 16, 22, 0.95);
+            --border-red: rgba(229, 9, 20, 0.4);
+            --glow-red: rgba(229, 9, 20, 0.3);
+            --telegram-blue: #229ED9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 50% 15%, rgba(229, 9, 20, 0.12) 0%, transparent 60%),
+                linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 15px;
+            overflow-x: hidden;
+        }
+
+        .impact-font {
+            font-family: 'Impact', 'Cairo', sans-serif !important;
+            letter-spacing: 1px;
+        }
+
+        /* الهيدر العلوي */
+        .header {
+            width: 100%;
+            max-width: 750px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+
+        .channel-btn {
+            background: linear-gradient(135deg, #E50914, #b20710);
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            box-shadow: 0 0 15px var(--glow-red);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .channel-btn:hover {
+            background: linear-gradient(135deg, #f40612, #c50812);
+            box-shadow: 0 0 25px rgba(229, 9, 20, 0.8);
+            transform: scale(1.03);
+        }
+
+        
+        .container {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* توسيط المحتوى داخل الـ container */
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--primary-red);
+            text-shadow: 0 0 15px var(--glow-red);
+        }
+
+        /* أماكن الإعلانات */
+        .ad-zone {
+            width: 100%;
+            max-width: 700px;
+            min-height: 60px;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px dashed rgba(229, 9, 20, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 0.75rem;
+            color: #777;
+        }
+
+        /* البوكس الرئيسي للحلقة */
+        .main-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-red);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 30px var(--glow-red);
+            border-radius: 16px;
+            padding: 35px 25px;
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            background: rgba(229, 9, 20, 0.15);
+            color: #E50914;
+            border: 1px solid rgba(229, 9, 20, 0.3);
+            padding: 4px 14px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge-dark {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ddd;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 4px 14px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .description {
+            color: #a1a1a1;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        /* صندوق اسم الملف */
+        .file-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 4px solid #E50914;
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            text-align: right;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-details {
+            overflow: hidden;
+        }
+
+        .file-label {
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .file-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            word-break: break-all;
+            direction: ltr;
+            text-align: right;
+        }
+
+        /* زر التحميل العريض */
+        .download-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #E50914, #b20710);
+            color: #ffffff;
+            font-size: 1.4rem;
+            font-weight: 900;
+            padding: 18px 0;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 5px 25px rgba(229, 9, 20, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, #f40612, #c50812);
+            box-shadow: 0 8px 35px rgba(229, 9, 20, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .security-note {
+            color: #777;
+            font-size: 0.75rem;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* سكشن التليجرام الفخم */
+        .telegram-banner-card {
+            width: 100%;
+            max-width: 700px;
+            background: rgba(12, 16, 24, 0.95);
+            border: 1px solid rgba(34, 158, 217, 0.3);
+            border-radius: 16px;
+            padding: 22px;
+            margin: 20px auto;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+            direction: rtl;
+            text-align: right;
+        }
+
+        .footer {
+            color: #555;
+            font-size: 0.75rem;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .title { font-size: 1.3rem; }
+            .main-container { padding: 25px 15px; }
+            .file-name { font-size: 0.9rem; }
+            .download-btn { font-size: 1.15rem; padding: 15px 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+        
+        <!-- الهيدر بتاعك مظبوط بالحرف وفي النص زي ما طلبت -->
+        <header class="header">
+            <div class="logo-area">
+                <span class="logo-text impact-font">SIGMA TV</span>
+                <span style="font-size: 1.5rem;">🎬</span>
+            </div>
+        </header>
+
+    <!-- إعلان علوي MoneyTag -->
+    <div class="ad-zone">
+        <span>MoneyTag Banner Ads Zone</span>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="main-container">
+        <div class="badge-container">
+            <span class="badge">حصرياً على SIGMA TV</span>
+            <span class="badge-dark">مترجم بالكامل</span>
+            <span class="badge-dark">1080p Full HD</span>
+        </div>
+
+        <div class="title impact-font">أحدث الأفلام والمسلسلات الحصرية أولاً بأول</div>
+        <div class="description">مترجمة بأعلى جودة وبأسرع سيرفرات التحميل المباشر بدون إعلانات مزعجة.</div>
+
+        <div class="file-box">
+            <div class="file-details">
+                <div class="file-label">اسم العمل المطلوب:</div>
+                <div class="file-name" id="fileNameDisplay">جاري التحميل...</div>
+            </div>
+            <div style="background: rgba(46, 125, 50, 0.15); border: 1px solid rgba(46, 125, 50, 0.4); color: #2e7d32; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; white-space: nowrap;">
+                ✔ جاهز للتحميل
+            </div>
+        </div>
+
+        <button class="download-btn impact-font" onclick="handleDownload()">
+            تحميل الآن - DOWNLOAD NOW 📥
+        </button>
+        <div class="security-note">🔒 رابط سريع ومباشر يدعم استكمال التحميل في أي وقت</div>
+    </div>
+
+    <!-- سكشن الانضمام لقناة التليجرام الفخم -->
+    <div class="telegram-banner-card">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px;">
+            <span style="color: #229ED9; font-size: 1.2rem;">✈️</span>
+            <span style="color: #229ED9; font-weight: 700; font-size: 0.95rem;">القناة الرسمية على التليجرام</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div style="flex: 1; min-width: 250px;">
+                <h3 style="color: #ffffff; font-size: 1.25rem; font-weight: 800; margin-bottom: 8px; line-height: 1.4;">
+                    انضم إلى مجتمع SIGMA TV لمتابعة أحدث الإصدارات
+                </h3>
+                <ul style="list-style: none; padding: 0; margin: 0; color: #b0b0b0; font-size: 0.85rem; display: flex; flex-direction: column; gap: 6px;">
+                    <li style="display: flex; align-items: center; gap: 6px;">
+                        <span style="color: #E50914; font-size: 0.7rem;">●</span> تغطية فورية للأفلام والمسلسلات الهوليوودية والآسيوية.
+                    </li>
+                    <li style="display: flex; align-items: center; gap: 6px;">
+                        <span style="color: #E50914; font-size: 0.7rem;">●</span> ترجمات احترافية ودقيقة مع جودات متعددة تليق بجميع السرعات.
+                    </li>
+                    <li style="display: flex; align-items: center; gap: 6px;">
+                        <span style="color: #E50914; font-size: 0.7rem;">●</span> إمكانية طلب الأعمال الخاصة والمسلسلات النادرة.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <a href="https://t.me/+csigPiyvuXcwMmM8" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #0088cc, #229ED9); color: #fff; padding: 12px 24px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 0.95rem; box-shadow: 0 4px 15px rgba(34, 158, 217, 0.4); transition: 0.3s; white-space: nowrap;">
+                    <span>انضم للقناة الآن</span>
+                    <span style="font-size: 1.1rem;">✈️</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- إعلان سفلي MoneyTag -->
+    <div class="ad-zone">
+        <span>MoneyTag Bottom Ads Zone</span>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 SIGMA TV - All Rights Reserved
+    </div>
+
+    <script>
+        // رابط إعلان MoneyTag Direct Link الخاص بك
+        const MONEYTAG_DIRECT_LINK = "https://uplcm.com/4/12190076";
+
+        // سيتم حقن اسم الفايل واللينك هنا تلقائياً من البوت
+        const dynamicFileName = "%%FILE_NAME%%";
+        const dynamicDownloadLink = "%%DOWNLOAD_LINK%%";
+
+        window.onload = function() {
+            if (dynamicFileName && dynamicFileName !== "%%FILE_NAME%%") {
+                document.getElementById('fileNameDisplay').textContent = dynamicFileName;
+            }
+        };
+
+        function handleDownload() {
+            if (dynamicDownloadLink && dynamicDownloadLink !== "%%DOWNLOAD_LINK%%") {
+                // 1. فتح إعلان MoneyTag في نافذة جديدة
+                if (MONEYTAG_DIRECT_LINK && MONEYTAG_DIRECT_LINK !== "https://uplcm.com/4/12190076") {
+                    window.open(MONEYTAG_DIRECT_LINK, '_blank');
+                }
+                // 2. التوجيه المباشر لرابط التحميل الحقيقي للفايل
+                window.location.href = dynamicDownloadLink;
+            } else {
+                alert("رابط التحميل غير متوفر حالياً.");
+            }
+        }
+    </script>
+
+</body>
+</html>
