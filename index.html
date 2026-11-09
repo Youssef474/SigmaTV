@@ -359,32 +359,36 @@
     </div>
 
     <script>
-        // رابط إعلان MoneyTag Direct Link الخاص بك
-        const MONEYTAG_DIRECT_LINK = "https://uplcm.com/4/12190076";
+    const MONEYTAG_DIRECT_LINK = "https://uplcm.com/4/12190076";
 
-        // سيتم حقن اسم الفايل واللينك هنا تلقائياً من البوت
-        const dynamicFileName = "%%FILE_NAME%%";
-        const dynamicDownloadLink = "%%DOWNLOAD_LINK%%";
+    // 1. استخراج اسم الحلقة من المسار
+    const pathSegments = window.location.pathname.split('/');
+    const lastSegment = pathSegments[pathSegments.length - 1];
+    let fileName = "الحلقة الجديدة";
+    
+    if (lastSegment && lastSegment.startsWith('ep_')) {
+        fileName = decodeURIComponent(lastSegment.replace('ep_', '').replace('.html', '').replace(/_/g, ' '));
+    }
+    
+    // عرض اسم الحلقة في الصفحة
+    document.getElementById('fileNameDisplay').innerText = fileName;
 
-        window.onload = function() {
-            if (dynamicFileName && dynamicFileName !== "%%FILE_NAME%%") {
-                document.getElementById('fileNameDisplay').textContent = dynamicFileName;
+    // 2. استخراج رابط التحميل الحقيقي من الـ Query Parameters (مثلا ?download=https://...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const downloadTarget = urlParams.get('download') || "";
+
+    // 3. دالة التحميل عند الضغط على الزر
+    function handleDownload() {
+        if (downloadTarget) {
+            if (MONEYTAG_DIRECT_LINK) {
+                window.open(MONEYTAG_DIRECT_LINK, '_blank');
             }
-        };
-
-        function handleDownload() {
-            if (dynamicDownloadLink && dynamicDownloadLink !== "%%DOWNLOAD_LINK%%") {
-                // 1. فتح إعلان MoneyTag في نافذة جديدة
-                if (MONEYTAG_DIRECT_LINK && MONEYTAG_DIRECT_LINK !== "https://uplcm.com/4/12190076") {
-                    window.open(MONEYTAG_DIRECT_LINK, '_blank');
-                }
-                // 2. التوجيه المباشر لرابط التحميل الحقيقي للفايل
-                window.location.href = dynamicDownloadLink;
-            } else {
-                alert("رابط التحميل غير متوفر حالياً.");
-            }
+            window.location.href = downloadTarget;
+        } else {
+            alert("رابط التحميل غير متوفر حالياً، تأكد من إضافة رابط الحلقة في الرابط (Query).");
         }
-    </script>
+    }
+</script>
 
 </body>
 </html>
