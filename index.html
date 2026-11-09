@@ -378,19 +378,22 @@
         &copy; 2026 SIGMA TV - All Rights Reserved
     </div>
 
-  <script>
+<script>
     const MONEYTAG_DIRECT_LINK = "https://uplcm.com/4/12190076";
 
-    // 1. استخراج اسم الحلقة بدقة من المسار وتنقيتها من الـ .html
-    const pathname = window.location.pathname;
-    const pathSegments = pathname.split('/');
-    const lastSegment = pathSegments[pathSegments.length - 1];
+    // 1. استخراج وفك ترميز اسم الحلقة بشكل صحيح من الـ URL بالكامل
     let fileName = "الحلقة الجديدة";
-    
-    if (lastSegment && lastSegment.includes('ep_')) {
-        // قص أي امتداد زي .html أو غيره
-        let cleanName = lastSegment.split('.')[0];
-        fileName = decodeURIComponent(cleanName.replace('ep_', '').replace(/_/g, ' '));
+    try {
+        const fullUrl = window.location.href;
+        // لو الـ URL فيه كلمة ep_
+        if (fullUrl.includes('ep_')) {
+            const parts = fullUrl.split('ep_');
+            let rawName = parts[1].split('?')[0]; // بنشيل أي باراميتر زي الـ download
+            rawName = rawName.split('.')[0]; // بنشيل الامتداد زي .html لو موجود
+            fileName = decodeURIComponent(rawName.replace(/_/g, ' '));
+        }
+    } catch (e) {
+        console.log("خطأ في قراءة الاسم:", e);
     }
     
     // عرض اسم الحلقة في الصفحة والتأكد من وجود العنصر
