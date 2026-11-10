@@ -382,7 +382,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // إعدادات فايربيز (حط بيانات مشروعك الحقيقية هنا)
+    // إعدادات فايربيز
     const firebaseConfig = {
       apiKey: "AIzaSyBY8TU_afs74FnhBrtOC0IChdzLXk9xOIo",
       authDomain: "sigma1tv.firebaseapp.com",
@@ -396,20 +396,23 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // 1. استخراج اسم الحلقة من الرابط وتعديل الصيغة لتطابق file_name في القاعدة
-    // مثلاً لو الرابط /Youssef_S1_E1.mp4 هيحولها لـ Youssef S1 E1.mp4
-    const pathSegments = window.location.pathname.split('/');
-    const lastSegment = pathSegments[pathSegments.length - 1] || "";
-    let targetFileName = decodeURIComponent(lastSegment.replace('ep_', '').replace(/_/g, ' '));
-
-    // لو مفيش اسم في الرابط، بنحط اسم افتراضي للتجربة
-    if (!targetFileName || targetFileName === "") {
-        targetFileName = "Youssef S1 E1.mp4"; 
-    }
+    // 1. استخراج اسم الملف بدقة من مسار الرابط الحالي
+    const pathname = window.location.pathname;
+    const pathSegments = pathname.split('/');
+    let rawSegment = pathSegments[pathSegments.length - 1] || "";
+    
+    // فك الرموز وتحويل الشرط التحتية لمسافات عشان يطابق داتا بايز
+    let targetFileName = decodeURIComponent(rawSegment.replace('ep_', '').replace(/_/g, ' '));
 
     async function fetchEpisodeData() {
         try {
-            // 2. البحث داخل كوليكشن uploads عن المطابق لـ file_name
+            // لو الرابط فاضي أو الصفحة الرئيسية، هنجيب آخر حلقة كمثال افتراضي، أو نعرض تنبيه
+            if (!targetFileName || targetFileName === "" || targetFileName === "/") {
+                document.getElementById('fileNameDisplay').innerText = "اختر الحلقة المطلوبة";
+                return;
+            }
+
+            // 2. الاستعلام من كوليكشن uploads بالبحث عن file_name المطابق تماماً للرابط
             const q = query(collection(db, "uploads"), where("file_name", "==", targetFileName));
             const querySnapshot = await getDocs(q);
 
@@ -417,18 +420,18 @@
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
                     
-                    // عرض اسم الحلقة في المكان المخصص
-                    document.getElementById('fileNameDisplay').innerText = data.file_name || "الحلقة الجديدة";
+                    // عرض الاسم الحقيقي
+                    document.getElementById('fileNameDisplay').innerText = data.file_name;
                     
-                    // حفظ رابط التحميل الحقيقي (download_link)
+                    // ربط زر التحميل بالرابط الخاص بهذه الحلقة فقط من القاعدة
                     window.fetchedDownloadLink = data.download_link;
                 });
             } else {
-                document.getElementById('fileNameDisplay').innerText = "عذراً، الحلقة غير متوفرة في قاعدة البيانات.";
+                document.getElementById('fileNameDisplay').innerText = "عذراً، هذه الحلقة غير متوفرة.";
             }
         } catch (error) {
             console.error("خطأ في جلب البيانات:", error);
-            document.getElementById('fileNameDisplay').innerText = "حدث خطأ أثناء الاتصال بالقاعدة.";
+            document.getElementById('fileNameDisplay').innerText = "حدث خطأ في الاتصال.";
         }
     }
 
@@ -438,7 +441,7 @@
 <script>
     const MONEYTAG_DIRECT_LINK = "https://uplcm.com/4/12190076";
 
-    // دالة التحميل المباشر مع إعلانات مونتاج
+    // دالة التحميل المباشر
     function handleDownload() {
         const downloadTarget = window.fetchedDownloadLink || "";
         if (downloadTarget) {
@@ -447,26 +450,9 @@
             }
             window.location.href = downloadTarget;
         } else {
-            alert("جارٍ تحميل البيانات، برجاء الانتظار قليلاً...");
+            alert("رابط التحميل غير متوفر لهذه الحلقة حالياً.");
         }
     }
 </script>
-
-    <script>
-        const MONEYTAG_DIRECT_LINK = "https://uplcm.com/4/12190076";
-
-        function handleDownload() {
-            if (window.downloadUrl) {
-                // فتح إعلانات مونتاج في تبويب جديد
-                if (MONEYTAG_DIRECT_LINK) {
-                    window.open(MONEYTAG_DIRECT_LINK, '_blank');
-                }
-                // التوجه لرابط التحميل الحقيقي
-                window.location.href = window.downloadUrl;
-            } else {
-                alert("برجاء الانتظار قليلاً لتكتمل جلب بيانات الحلقة...");
-            }
-        }
-    </script>
 </body>
 </html>
