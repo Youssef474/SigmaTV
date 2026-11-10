@@ -378,45 +378,66 @@
         &copy; 2026 SIGMA TV - All Rights Reserved
     </div>
 
-<script>
-    const MONEYTAG_DIRECT_LINK = "https://uplcm.com/4/12190076";
+<script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // 1. استخراج وفك ترميز اسم الحلقة بشكل صحيح من الـ URL بالكامل
-    let fileName = "الحلقة الجديدة";
-    try {
-        const fullUrl = window.location.href;
-        // لو الـ URL فيه كلمة ep_
-        if (fullUrl.includes('ep_')) {
-            const parts = fullUrl.split('ep_');
-            let rawName = parts[1].split('?')[0]; // بنشيل أي باراميتر زي الـ download
-            rawName = rawName.split('.')[0]; // بنشيل الامتداد زي .html لو موجود
-            fileName = decodeURIComponent(rawName.replace(/_/g, ' '));
-        }
-    } catch (e) {
-        console.log("خطأ في قراءة الاسم:", e);
-    }
-    
-    // عرض اسم الحلقة في الصفحة والتأكد من وجود العنصر
-    const nameDisplay = document.getElementById('fileNameDisplay');
-    if (nameDisplay) {
-        nameDisplay.innerText = fileName;
-    }
+        // إعدادات فايربيز الخاصة بمشروعك
+        const firebaseConfig = {
+            apiKey: "AIzaSy...", // حط بيانات مشروعك هنا
+            authDomain: "sigma1tv.firebaseapp.com",
+            projectId: "sigma1tv",
+            storageBucket: "sigma1tv.appspot.com",
+            messagingSenderId: "...",
+            appId: "..."
+        };
 
-    // 2. استخراج رابط التحميل الحقيقي من الـ Query Parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const downloadTarget = urlParams.get('download') || "";
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-    // 3. دالة التحميل عند الضغط على الزر
-    function handleDownload() {
-        if (downloadTarget) {
-            if (MONEYTAG_DIRECT_LINK) {
-                window.open(MONEYTAG_DIRECT_LINK, '_blank');
+        // استخراج معرف الحلقة من الرابط (مثلاً لو الرابط /ep_1 هيجيب ep_1)
+        const pathSegments = window.location.pathname.split('/');
+        const episodeId = pathSegments[pathSegments.length - 1] || "ep_1";
+
+        async function fetchEpisode() {
+            try {
+                // بنبحث في كوليكشن episodes بالـ ID
+                const docRef = doc(db, "episodes", episodeId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    // عرض اسم الحلقة
+                    document.getElementById('fileNameDisplay').innerText = data.title || "الحلقة الجديدة";
+                    // حفظ رابط التحميل في متغير عام عشان زر التحميل يستعمله
+                    window.downloadUrl = data.downloadUrl;
+                } else {
+                    document.getElementById('fileNameDisplay').innerText = "عذراً، الحلقة غير متوفرة.";
+                }
+            } catch (error) {
+                console.error("خطأ في الجلب:", error);
+                document.getElementById('fileNameDisplay').innerText = "حدث خطأ في تحميل البيانات.";
             }
-            window.location.href = decodeURIComponent(downloadTarget);
-        } else {
-            alert("رابط التحميل غير متوفر حالياً.");
         }
-    }
-</script>
+
+        fetchEpisode();
+    </script>
+
+    <script>
+        const MONEYTAG_DIRECT_LINK = "https://uplcm.com/4/12190076";
+
+        function handleDownload() {
+            if (window.downloadUrl) {
+                // فتح إعلانات مونتاج في تبويب جديد
+                if (MONEYTAG_DIRECT_LINK) {
+                    window.open(MONEYTAG_DIRECT_LINK, '_blank');
+                }
+                // التوجه لرابط التحميل الحقيقي
+                window.location.href = window.downloadUrl;
+            } else {
+                alert("برجاء الانتظار قليلاً لتكتمل جلب بيانات الحلقة...");
+            }
+        }
+    </script>
 </body>
 </html>
