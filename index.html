@@ -403,7 +403,7 @@
         async function fetchEpisode() {
             try {
                 // بنبحث في كوليكشن episodes بالـ ID
-                const docRef = doc(db, "episodes", episodeId);
+                const docRef = doc(db, "uplouds", episodeId);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
