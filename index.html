@@ -379,50 +379,78 @@
     </div>
 
 <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // إعدادات فايربيز الخاصة بمشروعك
-        const firebaseConfig = {
-          apiKey: "AIzaSyBY8TU_afs74FnhBrtOC0IChdzLXk9xOIo",
-          authDomain: "sigma1tv.firebaseapp.com",
-          projectId: "sigma1tv",
-          storageBucket: "sigma1tv.firebasestorage.app",
-          messagingSenderId: "15578368071",
-          appId: "1:15578368071:web:94b0e8a48004c6f7b78962",
-          measurementId: "G-FCLLJSKCSW"
-        };
+    // إعدادات فايربيز (حط بيانات مشروعك الحقيقية هنا)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBY8TU_afs74FnhBrtOC0IChdzLXk9xOIo",
+      authDomain: "sigma1tv.firebaseapp.com",
+      projectId: "sigma1tv",
+      storageBucket: "sigma1tv.firebasestorage.app",
+      messagingSenderId: "15578368071",
+      appId: "1:15578368071:web:94b0e8a48004c6f7b78962",
+      measurementId: "G-FCLLJSKCSW"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-        // استخراج معرف الحلقة من الرابط (مثلاً لو الرابط /ep_1 هيجيب ep_1)
-        const pathSegments = window.location.pathname.split('/');
-        const episodeId = pathSegments[pathSegments.length - 1] || "ep_1";
+    // 1. استخراج اسم الحلقة من الرابط وتعديل الصيغة لتطابق file_name في القاعدة
+    // مثلاً لو الرابط /Youssef_S1_E1.mp4 هيحولها لـ Youssef S1 E1.mp4
+    const pathSegments = window.location.pathname.split('/');
+    const lastSegment = pathSegments[pathSegments.length - 1] || "";
+    let targetFileName = decodeURIComponent(lastSegment.replace('ep_', '').replace(/_/g, ' '));
 
-        async function fetchEpisode() {
-            try {
-                // بنبحث في كوليكشن episodes بالـ ID
-                const docRef = doc(db, "uplouds", episodeId);
-                const docSnap = await getDoc(docRef);
+    // لو مفيش اسم في الرابط، بنحط اسم افتراضي للتجربة
+    if (!targetFileName || targetFileName === "") {
+        targetFileName = "Youssef S1 E1.mp4"; 
+    }
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    // عرض اسم الحلقة
-                    document.getElementById('fileNameDisplay').innerText = data.title || "الحلقة الجديدة";
-                    // حفظ رابط التحميل في متغير عام عشان زر التحميل يستعمله
-                    window.downloadUrl = data.downloadUrl;
-                } else {
-                    document.getElementById('fileNameDisplay').innerText = "عذراً، الحلقة غير متوفرة.";
-                }
-            } catch (error) {
-                console.error("خطأ في الجلب:", error);
-                document.getElementById('fileNameDisplay').innerText = "حدث خطأ في تحميل البيانات.";
+    async function fetchEpisodeData() {
+        try {
+            // 2. البحث داخل كوليكشن uploads عن المطابق لـ file_name
+            const q = query(collection(db, "uploads"), where("file_name", "==", targetFileName));
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    
+                    // عرض اسم الحلقة في المكان المخصص
+                    document.getElementById('fileNameDisplay').innerText = data.file_name || "الحلقة الجديدة";
+                    
+                    // حفظ رابط التحميل الحقيقي (download_link)
+                    window.fetchedDownloadLink = data.download_link;
+                });
+            } else {
+                document.getElementById('fileNameDisplay').innerText = "عذراً، الحلقة غير متوفرة في قاعدة البيانات.";
             }
+        } catch (error) {
+            console.error("خطأ في جلب البيانات:", error);
+            document.getElementById('fileNameDisplay').innerText = "حدث خطأ أثناء الاتصال بالقاعدة.";
         }
+    }
 
-        fetchEpisode();
-    </script>
+    fetchEpisodeData();
+</script>
+
+<script>
+    const MONEYTAG_DIRECT_LINK = "https://uplcm.com/4/12190076";
+
+    // دالة التحميل المباشر مع إعلانات مونتاج
+    function handleDownload() {
+        const downloadTarget = window.fetchedDownloadLink || "";
+        if (downloadTarget) {
+            if (MONEYTAG_DIRECT_LINK) {
+                window.open(MONEYTAG_DIRECT_LINK, '_blank');
+            }
+            window.location.href = downloadTarget;
+        } else {
+            alert("جارٍ تحميل البيانات، برجاء الانتظار قليلاً...");
+        }
+    }
+</script>
 
     <script>
         const MONEYTAG_DIRECT_LINK = "https://uplcm.com/4/12190076";
